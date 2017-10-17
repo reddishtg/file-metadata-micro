@@ -8,6 +8,8 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
+var multer = require('multer');
+var upload = multer({dest: './uploads'})
 
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function(req, res, next) {
@@ -37,6 +39,14 @@ app.route('/')
     .get(function(req, res) {
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
+
+app.post('/upload', upload.single('up'), function(req, res){
+  var response = {
+    originalname: req.file.originalname,
+    size: req.file.size
+  };
+  res.end(JSON.stringify(response))
+})
 
 // Respond not found to all the wrong routes
 app.use(function(req, res, next){
